@@ -34,26 +34,25 @@ const mysql = require('mysql2');
         }
         console.log('Base de données sélectionnée.');
     });
-    
+
     // Création des tables si elles n'existent pas
-    // Création de la table `users`
-    const createUsersTable = `
-        CREATE TABLE IF NOT EXISTS users (
+    // Création de la table `group_todo`
+    const createGroupTable = `
+        CREATE TABLE IF NOT EXISTS group_todo (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            email VARCHAR(30) NOT NULL UNIQUE,
-            password VARCHAR(100) NOT NULL,
+            group_name VARCHAR(30) NOT NULL UNIQUE,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );
     `;
 
-    // Vérification de l'existence de la table `users` et création si elle n'existe pas
-    db.query(createUsersTable, (err) => {
+    // Vérification de l'existence de la table `group_todo` et création si elle n'existe pas
+    db.query(createGroupTable, (err) => {
         if (err) {
-            console.error('Erreur lors de la création de la table `users`:', err.stack);
+            console.error('Erreur lors de la création de la table `group_todo`:', err.stack);
             return;
         }
-        console.log('Table `users` créée ou déjà existante.');
+        console.log('Table `group_todo` créée ou déjà existante.');
     });
 
     // Création de la table `todoitems`
@@ -61,13 +60,10 @@ const mysql = require('mysql2');
         CREATE TABLE IF NOT EXISTS todoitems (
             id INT AUTO_INCREMENT PRIMARY KEY,
             title VARCHAR(30) NOT NULL,
-            tasks TEXT NOT NULL,
-            status ENUM('To Do', 'In Progress', 'Done') NOT NULL DEFAULT 'To Do',
-            user_id INT,
-            group_name VARCHAR(50) DEFAULT 'default',
+            group_id VARCHAR(30) NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE 
+            Foreign key (group_id) references group_todo(group_name) on delete cascade
         );
     `;
 
